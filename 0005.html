@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Bingo Multi-Jogo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background: teal;
+      color: white;
+      text-align: center;
+      font-size: 18px;
+      padding: 20px;
+    }
+
+    table {
+      margin: auto;
+      background: beige;
+      color: black;
+      border-radius: 10px;
+      font-size: 20px;
+      padding: 10px;
+    }
+
+    input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      margin: 5px;
+    }
+
+    button {
+      background: black;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      font-size: 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>BINGO MULTI-JOGO</h2>
+
+  <table border="1">
+    <tr>
+      <td><label><input type="checkbox" data-numero="10">10</label></td>
+      <td><label><input type="checkbox" data-numero="22">22</label></td>
+      <td><label><input type="checkbox" data-numero="33">33</label></td>
+      <td><label><input type="checkbox" data-numero="44">44</label></td>
+    </tr>
+    <tr>
+      <td><label><input type="checkbox" data-numero="56">56</label></td>
+      <td><label><input type="checkbox" data-numero="62">62</label></td>
+      <td><label><input type="checkbox" data-numero="77">77</label></td>
+      <td><label><input type="checkbox" data-numero="84">84</label></td>
+    </tr>
+  </table>
+
+  <button onclick="verificarAcertos()">VERIFICAR RESULTADO</button>
+
+  <script>
+    function verificarAcertos() {
+      fetch('https://raw.githubusercontent.com/multijogo/ProjetoBingo/main/resultado.txt')
+        .then(response => response.text())
+        .then(text => {
+          const dezenasSorteadas = text.trim().split(',').map(num => parseInt(num));
+          const marcadas = document.querySelectorAll('input[type="checkbox"]:checked');
+          const numerosMarcados = [];
+
+          marcadas.forEach(cb => {
+            const numero = parseInt(cb.getAttribute('data-numero'));
+            if (!isNaN(numero)) {
+              numerosMarcados.push(numero);
+            }
+          });
+
+          const acertos = numerosMarcados.filter(num => dezenasSorteadas.includes(num));
+
+          if (acertos.length >= 5) {
+            alert(`PARABÉNS! Você acertou ${acertos.length} números: ${acertos.join(', ')}`);
+          } else {
+            alert(`Você acertou ${acertos.length} número(s): ${acertos.join(', ')}.\nTente novamente.`);
+          }
+        })
+        .catch(error => {
+          alert("Erro ao buscar o arquivo de resultado.");
+          console.error(error);
+        });
+    }
+  </script>
+
+</body>
+</html>
